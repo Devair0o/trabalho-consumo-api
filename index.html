@@ -1,14 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Site Rick and Morty</title>
+  <title>Rick and Morty</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #1e1e1e;
+      border: 1px solid #444;
+      color: #fff;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #1e1e1e;
+      padding: 10px;
+      border: 1px solid #333;
+      width: 200px;
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+    }
+
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .pagination button {
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+
+    .pagination button:hover {
+      background: #555;
+    }
+  </style>
 </head>
 <body>
-  <div id="paginate"></div>
-  <h1>Site Rick and Morty</h1>
-  <div id="content"></div>
+
+  <h1>Personagem de Rick and Morty</h1>
+
+  <input type="text" id="searchInput" placeholder="Digite o nome do personagem...">
+
+  <div class="cards" id="results"></div>
+
+  <div class="pagination" id="paginate"></div>
 
   <script src="script.js"></script>
 </body>

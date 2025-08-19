@@ -1,51 +1,75 @@
-const content = document.getElementById('content');
-let page = Number(window.location.hash.replace("#", ""))
-let maxpage = 0
+const input = document.getElementById('searchInput');
+const results = document.getElementById('results');
+const paginate = document.getElementById('paginate');
 
-async function getCharacters() {
+let page = 1;
+let maxPage = 1;
 
-  const response =
-    await fetch(`https://rickandmortyapi.com/api/character${isNaN(page) ? '' : '?page=' + page}`)
-  const data = await response.json()
-  maxpage = data.info.pages
-  const lista = document.createElement('ul')
-  let characters = ''
-  data.results.forEach(element => {
-    characters += `<li>
-      ${element.name}
-      <img src="${element.image}" alt="${element.name}"/>
-    </li>`
-  });
-  lista.innerHTML = characters
-  content.appendChild(lista)
+async function fetchCharacters(url) {
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
 
-  let paginate
-  if (!page || page === 1) {
-    paginate = ` <button id="next" onClick="next()" >Proximo</button>`
+    if (data.error) {
+      results.innerHTML = '<p>Nenhum personagem com esse nome.</p>';
+      paginate.innerHTML = '';
+      return;
+    }
+
+    showCharacters(data.results);
+    maxPage = data.info.pages || 1;
+    showPagination();
+  } catch (err) {
+    results.innerHTML = '<p>Erro...</p>';
+    console.error(err);
   }
-  if (page > 1 && page < maxpage) {
-    paginate = ` <button id="prev" onClick="prev()">Anterior</button>
-    <button id="next" onClick="next()">Proximo</button>
-    `
+}
+
+function showCharacters(chars) {
+  results.innerHTML = chars.map(c => `
+    <div class="card">
+      <img src="${c.image}" alt="${c.name}">
+      <h3>${c.name}</h3>
+      <p><strong>Espécie:</strong> ${c.species}<br>
+         <strong>Gênero:</strong> ${c.gender}<br>
+         <strong>Origem:</strong> ${c.origin.name}<br>
+         <strong>Status:</strong> ${c.status}
+      </p>
+    </div>
+  `).join('');
+}
+
+function showPagination() {
+  paginate.innerHTML = '';
+
+  if (page > 1) {
+    const prev = document.createElement('button');
+    prev.textContent = 'anterior';
+    prev.onclick = () => loadPage(page - 1);
+    paginate.appendChild(prev);
   }
-  if (page >= maxpage) {
-    paginate = ` <button id="prev" onClick="prev()">Anterior</button>`
+
+  if (page < maxPage) {
+    const next = document.createElement('button');
+    next.textContent = 'próximo';
+    next.onclick = () => loadPage(page + 1);
+    paginate.appendChild(next);
   }
-
-
-
-  document.getElementById('paginate').innerHTML = paginate
 }
-getCharacters()
 
+function loadPage(p) {
+  page = p;
+  fetchCharacters(`https://rickandmortyapi.com/api/character?page=${page}`);
+}
 
-async function next() {
-  const newPage = page === 0 ? 2 : page + 1
-  window.location.hash = "#" + newPage
-  window.location.reload()
-}
-function prev() {
-  const newPage = page === 0 ? 2 : page - 1
-  window.location.hash = "#" + newPage
-  window.location.reload()
-}
+input.addEventListener('input', () => {
+  const name = input.value.trim();
+  if (name) {
+    fetchCharacters(`https://rickandmortyapi.com/api/character/?name=${name}`);
+  } else {
+    loadPage(1);
+  }
+});
+
+// Iniciar na página 1
+loadPage(1);
