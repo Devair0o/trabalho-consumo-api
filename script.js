@@ -71,5 +71,6 @@ input.addEventListener('input', () => {
   }
 });
 
-// Iniciar na página 1
+
 loadPage(1);
+
